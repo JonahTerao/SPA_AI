@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>A1Z26 Cipher Encoder</title>
+    <title>Rectangular Island Generator</title>
     <style>
         * {
             margin: 0;
@@ -13,176 +13,879 @@
         }
         
         body {
-            background: linear-gradient(135deg, #6e8efb, #a777e3);
+            background: linear-gradient(to bottom, #1a2980, #26d0ce);
+            color: #fff;
             min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
             padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
         
         .container {
-            background-color: rgba(255, 255, 255, 0.9);
+            width: 100%;
+            max-width: 1000px;
+            background: rgba(0, 20, 40, 0.8);
             border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-            width: 90%;
-            max-width: 600px;
-            padding: 30px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            margin-top: 20px;
+        }
+        
+        header {
             text-align: center;
+            margin-bottom: 25px;
         }
         
         h1 {
-            color: #333;
-            margin-bottom: 20px;
-            font-weight: 600;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            color: #ffcb05;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
         }
         
         .description {
-            color: #555;
-            margin-bottom: 25px;
-            line-height: 1.6;
-        }
-        
-        .input-group {
-            margin-bottom: 25px;
-        }
-        
-        textarea {
-            width: 100%;
-            height: 120px;
-            padding: 15px;
-            border: 2px solid #ddd;
-            border-radius: 8px;
-            font-size: 16px;
-            resize: none;
-            transition: border-color 0.3s;
-        }
-        
-        textarea:focus {
-            outline: none;
-            border-color: #6e8efb;
+            color: #a0e7ff;
+            margin-bottom: 20px;
+            font-size: 1.1rem;
         }
         
         button {
-            background: linear-gradient(to right, #6e8efb, #a777e3);
+            background: linear-gradient(to bottom, #ff7e5f, #feb47b);
             color: white;
             border: none;
-            padding: 12px 30px;
+            padding: 14px 28px;
             border-radius: 50px;
-            font-size: 16px;
+            font-size: 1.1rem;
+            font-weight: bold;
             cursor: pointer;
-            transition: transform 0.3s, box-shadow 0.3s;
-            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            margin: 10px 0;
         }
         
         button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
         }
         
         button:active {
-            transform: translateY(0);
+            transform: translateY(1px);
         }
         
-        .output-group {
-            margin-top: 25px;
+        .island-container {
+            position: relative;
+            width: 100%;
+            margin: 25px 0;
+            display: flex;
+            justify-content: center;
         }
         
-        .output {
-            background-color: #f8f9fa;
-            border: 2px solid #eee;
+        canvas {
+            background: linear-gradient(to bottom, #1e90ff, #006db3);
             border-radius: 8px;
-            padding: 15px;
-            min-height: 60px;
-            margin-top: 10px;
-            text-align: center;
-            font-size: 18px;
-            word-break: break-all;
-            color: #333;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+            border: 2px solid #00b4ff;
         }
         
-        .example {
-            background-color: #f0f4ff;
-            padding: 15px;
-            border-radius: 8px;
-            margin-top: 25px;
+        .compass-container {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .compass {
+            width: 100px;
+            height: 100px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            position: relative;
+        }
+        
+        .compass-rose {
+            position: relative;
+            width: 80px;
+            height: 80px;
+        }
+        
+        .compass-direction {
+            position: absolute;
+            font-weight: bold;
             font-size: 14px;
+            color: #222;
+        }
+        
+        .compass-n { 
+            top: 0; 
+            left: 50%; 
+            transform: translateX(-50%); 
+            color: #d32f2f;
+        }
+        
+        .compass-e { 
+            right: 0; 
+            top: 50%; 
+            transform: translateY(-50%); 
+        }
+        
+        .compass-s { 
+            bottom: 0; 
+            left: 50%; 
+            transform: translateX(-50%); 
+        }
+        
+        .compass-w { 
+            left: 0; 
+            top: 50%; 
+            transform: translateY(-50%); 
+        }
+        
+        .compass-needle {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 4px;
+            height: 35px;
+            background: #d32f2f;
+            transform-origin: center 18px;
+            transform: translate(-50%, -50%) rotate(0deg);
+            z-index: 2;
+        }
+        
+        .compass-needle::after {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -8px;
+            width: 0;
+            height: 0;
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            border-bottom: 18px solid #d32f2f;
+        }
+        
+        .compass-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 12px;
+            height: 12px;
+            background: #d32f2f;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 3;
+        }
+        
+        .scale-container {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 8px 12px;
+            border-radius: 4px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+            border: 1px solid #ccc;
+        }
+        
+        .scale-title {
+            font-size: 12px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .scale-bar {
+            display: flex;
+            height: 16px;
+            margin-bottom: 4px;
+        }
+        
+        .scale-section {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .scale-black {
+            height: 10px;
+            background: #000;
+            border-right: 1px solid #fff;
+        }
+        
+        .scale-white {
+            height: 10px;
+            background: #fff;
+            border-right: 1px solid #000;
+        }
+        
+        .scale-labels {
+            display: flexible;
+            justify-content: space-between;
+            width: 100%;
+        }
+        
+        .scale-label {
+            font-size: 10px;
+            font-weight: bold;
+            color: #000;
+        }
+        
+        .scale-units {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            margin-top: 2px;
+        }
+        
+        .scale-unit {
+            font-size: 9px;
             color: #444;
         }
         
-        .example h3 {
-            margin-bottom: 8px;
-            color: #6e8efb;
+        .legend {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 25px;
+            gap: 15px;
+            background: rgba(255, 255, 255, 0.15);
+            padding: 15px;
+            border-radius: 10px;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin: 0 10px;
+        }
+        
+        .legend-color {
+            width: 25px;
+            height: 25px;
+            margin-right: 8px;
+            border-radius: 4px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
         }
         
         footer {
+            text-align: center;
             margin-top: 30px;
-            color: #777;
-            font-size: 14px;
+            color: #a0e7ff;
+            font-size: 1rem;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 15px;
+        }
+        
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 12px;
+            border-radius: 10px;
+        }
+        
+        label {
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+            color: #a0e7ff;
+        }
+        
+        input[type="range"] {
+            width: 180px;
+        }
+        
+        .loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 1.2rem;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 10px 20px;
+            border-radius: 8px;
+            z-index: 10;
+        }
+        
+        .map-stats {
+            text-align: center;
+            margin-top: 15px;
+            color: #a0e7ff;
+            font-size: 0.9rem;
         }
     </style>
 </head>
 <body>
+    <header>
+        <h1>Rectangular Island Generator</h1>
+        <p class="description">Generate islands with rectangular maps and improved terrain distribution</p>
+    </header>
+    
     <div class="container">
-        <h1>A1Z26 Cipher Encoder</h1>
-        
-        <p class="description">
-            The A1Z26 cipher replaces each letter with its position in the alphabet (A=1, B=2, ..., Z=26).
-            Enter your text below and click "Encode" to convert it.
-        </p>
-        
-        <div class="input-group">
-            <textarea id="inputText" placeholder="Enter text to encode (letters only)"></textarea>
+        <div class="controls">
+            <button id="generate-btn">Generate New Island</button>
+            <div class="control-group">
+                <label for="size-slider">Island Size</label>
+                <input type="range" id="size-slider" min="0.5" max="1.5" step="0.1" value="1.0">
+            </div>
+            <div class="control-group">
+                <label for="complexity-slider">Terrain Complexity</label>
+                <input type="range" id="complexity-slider" min="0.5" max="2.0" step="0.1" value="1.2">
+            </div>
         </div>
         
-        <button id="encodeBtn">Encode Text</button>
-        
-        <div class="output-group">
-            <h2>Encoded Result:</h2>
-            <div id="output" class="output"></div>
+        <div class="island-container">
+            <canvas id="island-canvas" width="800" height="500"></canvas>
+            <div id="loading" class="loading" style="display: none;">Generating terrain...</div>
+            
+            <div class="compass-container">
+                <div class="compass">
+                    <div class="compass-rose">
+                        <div class="compass-direction compass-n">N</div>
+                        <div class="compass-direction compass-e">E</div>
+                        <div class="compass-direction compass-s">S</div>
+                        <div class="compass-direction compass-w">W</div>
+                        <div class="compass-needle"></div>
+                        <div class="compass-center"></div>
+                    </div>
+                </div>
+                <p style="margin-top: 10px; font-weight: bold;">North</p>
+            </div>
+            
+            <div class="scale-container">
+                <div class="scale-title">Scale</div>
+                <div class="scale-bar">
+                    <div class="scale-section">
+                        <div class="scale-black" style="width: 25px;"></div>
+                        <div class="scale-white" style="width: 25px;"></div>
+                        <div class="scale-black" style="width: 25px;"></div>
+                        <div class="scale-white" style="width: 25px;"></div>
+                    </div>
+                </div>
+                <div class="scale-labels">
+                    <div class="scale-label">0</div>
+                    <div class="scale-label">1 km</div>
+                    <div class="scale-label">2 km</div>
+                </div>
+                <div class="scale-units">
+                    <div class="scale-unit">0</div>
+                    <div class="scale-unit">0.6 mi</div>
+                    <div class="scale-unit">1.2 mi</div>
+                </div>
+            </div>
         </div>
         
-        <div class="example">
-            <h3>Example:</h3>
-            <p>"HELLO" becomes "8-5-12-12-15"</p>
-            <p>"WORLD" becomes "23-15-18-12-4"</p>
+        <div class="map-stats" id="map-stats">
+            Island size: Calculating...
+        </div>
+        
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-color" style="background-color: #FFEB3B;"></div>
+                <span>Beach</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background-color: #8BC34A;"></div>
+                <span>Grassland</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background-color: #388E3C;"></div>
+                <span>Forest</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background-color: #795548;"></div>
+                <span>Mountain</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background-color: #9E9E9E;"></div>
+                <span>Rocky Peak</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background-color: #FFFFFF; border: 1px solid #ccc;"></div>
+                <span>Snow</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background-color: #1e90ff;"></div>
+                <span>Water</span>
+            </div>
         </div>
         
         <footer>
-            <p>Note: Non-alphabet characters will be ignored in the encoding process.</p>
+            <p>Each island is generated with a rectangular map and improved terrain distribution.</p>
         </footer>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const inputText = document.getElementById('inputText');
-            const encodeBtn = document.getElementById('encodeBtn');
-            const output = document.getElementById('output');
+            const canvas = document.getElementById('island-canvas');
+            const ctx = canvas.getContext('2d');
+            const generateBtn = document.getElementById('generate-btn');
+            const sizeSlider = document.getElementById('size-slider');
+            const complexitySlider = document.getElementById('complexity-slider');
+            const loading = document.getElementById('loading');
+            const mapStats = document.getElementById('map-stats');
             
-            encodeBtn.addEventListener('click', function() {
-                const text = inputText.value.toUpperCase();
-                let encoded = '';
+            // Adjust canvas size for high DPI displays
+            const dpr = window.devicePixelRatio || 1;
+            canvas.width = canvas.width * dpr;
+            canvas.height = canvas.height * dpr;
+            ctx.scale(dpr, dpr);
+            
+            // Improved Perlin noise implementation
+            class PerlinNoise {
+                constructor() {
+                    this.gradients = {};
+                    this.memory = {};
+                }
                 
-                for (let i = 0; i < text.length; i++) {
-                    const char = text[i];
+                randVector() {
+                    const theta = Math.random() * 2 * Math.PI;
+                    return {x: Math.cos(theta), y: Math.sin(theta)};
+                }
+                
+                dotProductGrid(x, y, vx, vy) {
+                    let gVector;
+                    const key = `${vx},${vy}`;
+                    if (this.gradients[key]) {
+                        gVector = this.gradients[key];
+                    } else {
+                        gVector = this.randVector();
+                        this.gradients[key] = gVector;
+                    }
+                    const dVector = {x: x - vx, y: y - vy};
+                    return dVector.x * gVector.x + dVector.y * gVector.y;
+                }
+                
+                smootherstep(x) {
+                    return 6*x**5 - 15*x**4 + 10*x**3;
+                }
+                
+                interp(x, a, b) {
+                    return a + this.smootherstep(x) * (b - a);
+                }
+                
+                get(x, y) {
+                    const key = `${x},${y}`;
+                    if (this.memory[key]) {
+                        return this.memory[key];
+                    }
                     
-                    // Only process letters A-Z
-                    if (char >= 'A' && char <= 'Z') {
-                        // Get character code (A=65, so subtract 64 to get 1)
-                        const code = char.charCodeAt(0) - 64;
+                    const x0 = Math.floor(x);
+                    const x1 = x0 + 1;
+                    const y0 = Math.floor(y);
+                    const y1 = y0 + 1;
+                    
+                    const sx = x - x0;
+                    const sy = y - y0;
+                    
+                    let n0 = this.dotProductGrid(x, y, x0, y0);
+                    let n1 = this.dotProductGrid(x, y, x1, y0);
+                    const ix0 = this.interp(sx, n0, n1);
+                    
+                    n0 = this.dotProductGrid(x, y, x0, y1);
+                    n1 = this.dotProductGrid(x, y, x1, y1);
+                    const ix1 = this.interp(sx, n0, n1);
+                    
+                    const value = this.interp(sy, ix0, ix1);
+                    this.memory[key] = value;
+                    return value;
+                }
+                
+                octave(x, y, octaves, persistence) {
+                    let total = 0;
+                    let frequency = 1;
+                    let amplitude = 1;
+                    let maxValue = 0;
+                    
+                    for (let i = 0; i < octaves; i++) {
+                        total += this.get(x * frequency, y * frequency) * amplitude;
+                        maxValue += amplitude;
+                        amplitude *= persistence;
+                        frequency *= 2;
+                    }
+                    
+                    return total / maxValue;
+                }
+            }
+            
+            // Generate initial island
+            generateIsland();
+            
+            // Event listeners
+            generateBtn.addEventListener('click', generateIsland);
+            sizeSlider.addEventListener('input', generateIsland);
+            complexitySlider.addEventListener('input', generateIsland);
+            
+            async function generateIsland() {
+                loading.style.display = 'block';
+                mapStats.textContent = "Generating terrain...";
+                
+                // Small delay to allow UI to update
+                await new Promise(resolve => setTimeout(resolve, 10));
+                
+                // Clear canvas
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                // Draw ocean background
+                drawOcean();
+                
+                // Generate and draw island
+                const islandData = await createIslandShape();
+                const islandArea = drawIsland(islandData);
+                
+                // Update map stats
+                updateMapStats(islandData, islandArea);
+                
+                loading.style.display = 'none';
+            }
+            
+            function drawOcean() {
+                // Draw ocean with wave effect
+                const width = canvas.width / dpr;
+                const height = canvas.height / dpr;
+                
+                // Deep ocean
+                const gradient = ctx.createLinearGradient(0, 0, 0, height);
+                gradient.addColorStop(0, '#1e90ff');
+                gradient.addColorStop(1, '#006db3');
+                
+                ctx.fillStyle = gradient;
+                ctx.fillRect(0, 0, width, height);
+                
+                // Add wave details
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
+                for (let i = 0; i < 300; i++) {
+                    const x = Math.random() * width;
+                    const y = Math.random() * height;
+                    const size = Math.random() * 4 + 1;
+                    ctx.fillRect(x, y, size, 1);
+                }
+            }
+            
+            async function createIslandShape() {
+                const width = canvas.width / dpr;
+                const height = canvas.height / dpr;
+                const centerX = width / 2;
+                const centerY = height / 2;
+                const sizeFactor = parseFloat(sizeSlider.value);
+                const baseRadius = Math.min(centerX, centerY) * 0.7 * sizeFactor;
+                
+                // Create multiple noise generators for different terrain features
+                const elevationNoise = new PerlinNoise();
+                const moistureNoise = new PerlinNoise();
+                const mountainNoise = new PerlinNoise();
+                const snowNoise = new PerlinNoise();
+                const shapeNoise = new PerlinNoise();
+                
+                const elevationMap = [];
+                const moistureMap = [];
+                const mountainMap = [];
+                const snowMap = [];
+                
+                const complexity = parseFloat(complexitySlider.value);
+                const octaves = Math.floor(4 + complexity * 2);
+                
+                for (let y = 0; y < height; y++) {
+                    elevationMap[y] = [];
+                    moistureMap[y] = [];
+                    mountainMap[y] = [];
+                    snowMap[y] = [];
+                    for (let x = 0; x < width; x++) {
+                        // Generate noise values with different frequencies
+                        const nx = x / width * 6;
+                        const ny = y / height * 6;
                         
-                        // Add hyphen if not the first character
-                        if (encoded.length > 0) {
-                            encoded += '-';
-                        }
+                        let elevation = elevationNoise.octave(nx, ny, octaves, 0.5);
+                        let moisture = moistureNoise.octave(nx + 5, ny + 5, octaves, 0.5);
+                        let mountain = mountainNoise.octave(nx + 10, ny + 10, octaves + 2, 0.6);
+                        let snow = snowNoise.octave(nx + 20, ny + 20, octaves + 1, 0.7);
+                        let shape = shapeNoise.octave(nx + 30, ny + 30, octaves, 0.6);
                         
-                        encoded += code;
+                        // Create rectangular island shape with irregular edges
+                        const rectX = (x - centerX) / (baseRadius * 1.4);
+                        const rectY = (y - centerY) / (baseRadius * 0.8);
+                        
+                        // Use a rectangular shape with noise for irregular edges
+                        let distance = Math.max(Math.abs(rectX), Math.abs(rectY));
+                        distance = distance * (0.9 + shape * 0.2); // Add irregularity
+                        
+                        // Shape into an island
+                        elevation = (elevation + 0.2) * (1 - distance);
+                        if (distance > 0.9) elevation = -1;
+                        else if (distance > 0.8) elevation = elevation - 0.3;
+                        
+                        // Increase mountain frequency and narrowness
+                        mountain = mountain * 0.9 + 0.1;
+                        mountain = Math.pow(mountain, 1.5);
+                        
+                        // Snow at high elevations
+                        snow = snow * 0.8 + 0.2;
+                        
+                        elevationMap[y][x] = elevation;
+                        moistureMap[y][x] = moisture;
+                        mountainMap[y][x] = mountain;
+                        snowMap[y][x] = snow;
                     }
                 }
                 
-                // Display the result
-                output.textContent = encoded || 'No valid letters to encode';
-            });
+                return {
+                    centerX,
+                    centerY,
+                    baseRadius,
+                    elevationMap,
+                    moistureMap,
+                    mountainMap,
+                    snowMap,
+                    width,
+                    height
+                };
+            }
+            
+            function drawIsland(islandData) {
+                const { elevationMap, moistureMap, mountainMap, snowMap, width, height } = islandData;
+                
+                let landCount = 0;
+                let totalCount = width * height;
+                
+                // First pass: create the base terrain
+                for (let y = 0; y < height; y++) {
+                    for (let x = 0; x < width; x++) {
+                        const elevation = elevationMap[y][x];
+                        const moisture = moistureMap[y][x];
+                        const mountain = mountainMap[y][x];
+                        const snow = snowMap[y][x];
+                        
+                        if (elevation < 0) {
+                            // Water
+                            const depth = Math.abs(elevation);
+                            const blue = Math.floor(150 + depth * 100);
+                            ctx.fillStyle = `rgb(0, 0, ${blue})`;
+                        } else {
+                            landCount++;
+                            
+                            if (elevation < 0.05 && isCoastal(elevationMap, x, y, width, height)) {
+                                // Beach
+                                ctx.fillStyle = '#FFEB3B';
+                            } else if (elevation < 0.4) { // Increased elevation range for grasslands
+                                // Grassland or forest - using moisture noise for distribution
+                                if (moisture > 0.5) { // Lowered moisture threshold for more forests
+                                    ctx.fillStyle = '#388E3C'; // Forest
+                                } else {
+                                    ctx.fillStyle = '#8BC34A'; // Grassland
+                                }
+                            } else if (elevation < 0.6) { // Lowered elevation requirement for mountains
+                                // Mountains with depth shading - using mountain noise for distribution
+                                if (mountain > 0.4) { // Lowered mountain threshold
+                                    const shade = Math.max(0.3, 1 - (mountain * 0.5));
+                                    ctx.fillStyle = `rgb(${121 * shade}, ${85 * shade}, ${72 * shade})`;
+                                } else {
+                                    // Higher grasslands/foothills
+                                    ctx.fillStyle = '#689F38';
+                                }
+                            } else {
+                                // Mountain peaks with snow - lowered elevation requirement
+                                if (snow > 0.6 && elevation > 0.65) { // Lowered snow threshold
+                                    ctx.fillStyle = '#FFFFFF'; // Snow
+                                } else {
+                                    ctx.fillStyle = '#9E9E9E'; // Rocky peak
+                                }
+                            }
+                        }
+                        
+                        ctx.fillRect(x, y, 1, 1);
+                    }
+                }
+                
+                // Second pass: add details and fix borders
+                for (let y = 0; y < height; y++) {
+                    for (let x = 0; x < width; x++) {
+                        const elevation = elevationMap[y][x];
+                        
+                        if (elevation >= 0) {
+                            // Add mountain details and snow
+                            addMountainDetails(x, y, elevation, mountainMap[y][x], snowMap[y][x]);
+                            
+                            // Fix borders for a more realistic look
+                            fixBorders(x, y, elevationMap);
+                        }
+                    }
+                }
+                
+                // Add extra details
+                addShoreDetails(islandData);
+                addForestDetails(islandData);
+                
+                // Calculate land area
+                const landPercentage = (landCount / totalCount) * 100;
+                return landPercentage;
+            }
+            
+            function addMountainDetails(x, y, elevation, mountain, snow) {
+                // Add detailed mountain features
+                if (elevation > 0.4 && mountain > 0.4) { // Lowered thresholds
+                    // Darker shading for depth
+                    if (mountain > 0.6) { // Lowered threshold
+                        ctx.fillStyle = '#5D4037';
+                        ctx.fillRect(x, y, 1, 1);
+                    }
+                    
+                    // Snow on high mountains - lowered elevation requirement
+                    if (elevation > 0.6 && snow > 0.5) { // Lowered thresholds
+                        // More snow at higher elevations
+                        const snowAmount = (elevation - 0.6) * 3 + (snow - 0.5) * 2;
+                        if (snowAmount > 0.5) {
+                            ctx.fillStyle = '#FFFFFF';
+                            ctx.fillRect(x, y, 1, 1);
+                        } else if (snowAmount > 0.3) {
+                            // Partial snow coverage
+                            ctx.fillStyle = `rgba(255, 255, 255, ${snowAmount})`;
+                            ctx.fillRect(x, y, 1, 1);
+                        }
+                    }
+                }
+            }
+            
+            function fixBorders(x, y, elevationMap) {
+                const width = elevationMap[0].length;
+                const height = elevationMap.length;
+                
+                // Check if we're near the edge of the map
+                if (x === 0 || x === width - 1 || y === 0 || y === height - 1) {
+                    // Sample surrounding pixels to create a smooth transition
+                    let waterNeighbors = 0;
+                    let totalNeighbors = 0;
+                    
+                    for (let dy = -1; dy <= 1; dy++) {
+                        for (let dx = -1; dx <= 1; dx++) {
+                            if (dx === 0 && dy === 0) continue;
+                            
+                            const nx = x + dx;
+                            const ny = y + dy;
+                            
+                            if (nx >= 0 && nx < width && ny >= 0 && ny < height) {
+                                totalNeighbors++;
+                                if (electionMap[ny][nx] < 0) {
+                                    waterNeighbors++;
+                                }
+                            }
+                        }
+                    }
+                    
+                    // If we're on the border and surrounded by water, make it water
+                    if (waterNeighbors > totalNeighbors * 0.7) {
+                        ctx.fillStyle = '#1e90ff';
+                        ctx.fillRect(x, y, 1, 1);
+                    }
+                }
+            }
+            
+            function updateMapStats(islandData, landPercentage) {
+                const { baseRadius } = islandData;
+                const islandWidth = (baseRadius * 2.8).toFixed(1);
+                const islandHeight = (baseRadius * 1.6).toFixed(1);
+                
+                mapStats.textContent = `Island size: ${islandWidth} km × ${islandHeight} km | Land area: ${landPercentage.toFixed(1)}% of view`;
+            }
+            
+            function isCoastal(elevationMap, x, y, width, height) {
+                // Check if this point is adjacent to water (coastal)
+                for (let dy = -1; dy <= 1; dy++) {
+                    for (let dx = -1; dx <= 1; dx++) {
+                        const nx = x + dx;
+                        const ny = y + dy;
+                        
+                        if (nx >= 0 && nx < width && ny >= 0 && ny < height) {
+                            if (elevationMap[ny][nx] < 0) {
+                                return true;
+                            }
+                        }
+                    }
+                }
+                return false;
+            }
+            
+            function addShoreDetails(islandData) {
+                const { elevationMap, width, height } = islandData;
+                
+                // Add waves along the shore
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+                for (let y = 1; y < height - 1; y++) {
+                    for (let x = 1; x < width - 1; x++) {
+                        if (elevationMap[y][x] >= 0 && elevationMap[y][x] < 0.05 && 
+                            isCoastal(elevationMap, x, y, width, height)) {
+                            if (Math.random() > 0.9) {
+                                ctx.fillRect(x, y, 1, 1);
+                            }
+                        }
+                    }
+                }
+                
+                // Add some random rocks
+                ctx.fillStyle = '#5D4037';
+                for (let i = 0; i < 80; i++) {
+                    const x = Math.floor(Math.random() * width);
+                    const y = Math.floor(Math.random() * height);
+                    
+                    if (elevationMap[y] && elevationMap[y][x] > 0.1 && elevationMap[y][x] < 0.3) {
+                        const size = Math.floor(Math.random() * 2) + 1;
+                        ctx.fillRect(x, y, size, size);
+                    }
+                }
+            }
+            
+            function addForestDetails(islandData) {
+                const { elevationMap, moistureMap, width, height } = islandData;
+                
+                // Add forest details (trees)
+                for (let i = 0; i < 1000; i++) { // Increased tree count
+                    const x = Math.floor(Math.random() * width);
+                    const y = Math.floor(Math.random() * height);
+                    
+                    if (elevationMap[y] && elevationMap[y][x] > 0.05 && elevationMap[y][x] < 0.4 && 
+                        moistureMap[y][x] > 0.5) { // Using moisture noise for forest distribution
+                        // Tree color variation
+                        const treeShade = Math.random();
+                        if (treeShade > 0.7) {
+                            ctx.fillStyle = '#1B5E20'; // Dark green
+                        } else if (treeShade > 0.4) {
+                            ctx.fillStyle = '#2E7D32'; // Medium green
+                        } else {
+                            ctx.fillStyle = '#388E3C'; // Light green
+                        }
+                        
+                        ctx.fillRect(x, y, 1, 1);
+                        
+                        // Add clusters of trees
+                        if (Math.random() > 0.6) {
+                            for (let j = 0; j < 3; j++) {
+                                const ox = Math.floor(Math.random() * 5) - 2;
+                                const oy = Math.floor(Math.random() * 5) - 2;
+                                if (x+ox >= 0 && x+ox < width && y+oy >= 0 && y+oy < height) {
+                                    ctx.fillRect(x+ox, y+oy, 1, 1);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         });
     </script>
 </body>
